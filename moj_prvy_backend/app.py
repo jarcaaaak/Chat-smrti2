@@ -63,7 +63,7 @@ people = [
     },
     {
         "id": 6,
-        "name": "Carlie Kirk",
+        "name": "Charlie Kirk",
         "image": "https://media.tenor.com/vpxKBtwubp8AAAAe/charlie-kirk.png",
         "bio": "1993 - 2025"
     },
