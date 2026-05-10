@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat – {{ person.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="sky-bg">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="cloud cloud-5"></div>
+        <div class="cloud cloud-6"></div>
+        <div class="sun-glow"></div>
+    </div>
+
+    <div class="chat-page-wrap">
+
+        <div class="chat-window">
+
+            <div class="chat-header">
+                <a href="/" class="back-btn">← Späť</a>
+                <div class="chat-halo">
+                    <img src="{{ person.image }}" alt="{{ person.name }}">
+                </div>
+                <div class="chat-header-info">
+                    <div class="chat-person-name">{{ person.name }}</div>
+                    <div class="chat-person-bio">{{ person.bio }}</div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="messages">
+                <div class="msg msg-ai">
+                    Ahoj! Som {{ person.name }}. O čom sa chceš so mnou rozprávať?
+                </div>
+            </div>
+
+            <div class="typing-wrap" id="typing" style="display:none;">
+                <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Zadajte meno..." autocomplete="off">
+                <button class="send-btn" id="send-btn">➤</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const personId = {{ person.id | tojson }};
+        const personName = {{ person.name | tojson }};
+        const messagesContainer = document.getElementById('messages');
+        const input = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typing = document.getElementById('typing');
+
+        function addMessage(text, isUser) {
+            const msg = document.createElement('div');
+            msg.className = isUser ? 'msg msg-user' : 'msg msg-ai';
+            msg.textContent = text;
+            messagesContainer.appendChild(msg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            input.value = '';
+
+            typing.style.display = 'flex';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text, person_id: personId })
+                });
+                const data = await response.json();
+                typing.style.display = 'none';
+                addMessage(data.reply || 'Žiadna odpoveď...', false);
+            } catch (e) {
+                typing.style.display = 'none';
+                addMessage('Chyba pri pripojení k nebesiam...', false);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        window.onload = () => input.focus();
+    </script>
+
+</body>
+</html>

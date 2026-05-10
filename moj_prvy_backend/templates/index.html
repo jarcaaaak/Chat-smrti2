@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat so slovenskými osobnosťami minulosti</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="sky-bg">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="cloud cloud-5"></div>
+        <div class="cloud cloud-6"></div>
+        <div class="sun-glow"></div>
+    </div>
+
+    <div class="page-content">
+
+        <h1 class="main-title">† Chat smrti †<br></h1>
+
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Zadajte meno na vyhľadávanie...">
+        </div>
+
+        <div class="cards-container">
+            {% for person in people %}
+            <a href="/chat/{{ person.id }}" class="person-card">
+                <div class="card-avatar">
+                    <img src="{{ person.image }}" alt="{{ person.name }}">
+                </div>
+                <div class="person-name">{{ person.name }}</div>
+                <div class="person-years">{{ person.bio }}</div>
+            </a>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
